@@ -1,0 +1,77 @@
+StorageBoxTest
+
+new container cretated:fridge1
+new container cretated:fridge2
+new container cretated:box1
+new container cretated:box2
+new container cretated:box3
+      -> trying to store 6 meat
+      ->      6 of meat added to fridge1
+      -> trying to store 6 meat
+      ->      2 of meat added to fridge1
+      ->      4 of meat added to fridge2
+      -> trying to store 1 salad
+      ->      1 of salad added to box1
+      -> trying to store 10 rice
+      ->      5 of rice added to box2
+      ->      5 of rice added to box3
+      -> trying to store 1 fish
+      ->      1 of fish added to fridge2
+
+Stock by containers:
+--------------------------------------------
+box1   space: 40 , used:30 / 75%
+ * salad     :    1  (space:30)
+
+box2   space: 40 , used:40 / 100%
+ * rice      :    5  (space:40)
+
+box3   space: 40 , used:40 / 100%
+ * rice      :    5  (space:40)
+
+fridge1   space: 100 , used:96 / 96%
+ * meat      :    8  (space:96)
+
+fridge2   space: 100 , used:63 / 63%
+ * meat      :    4  (space:48)
+ * fish      :    1  (space:15)
+
+      -> trying to get 1 of salad
+      ->     1 of salad got from box1
+      ->     succesfully gathered 1 of salad missing:0
+      -> trying to get 8 of meat
+      ->     4 of meat got from fridge2
+      ->     4 of meat got from fridge1
+      ->     succesfully gathered 8 of meat missing:0
+      -> trying to get 8 of rice
+      ->     5 of rice got from box3
+      ->     3 of rice got from box2
+      ->     succesfully gathered 8 of rice missing:0
+
+Stock by containers:
+--------------------------------------------
+box1   space: 40 , used:0 / 0%
+
+box2   space: 40 , used:16 / 40%
+ * rice      :    2  (space:16)
+
+box3   space: 40 , used:0 / 0%
+
+fridge1   space: 100 , used:48 / 48%
+ * meat      :    4  (space:48)
+
+fridge2   space: 100 , used:15 / 15%
+ * fish      :    1  (space:15)
+
+
+--------------------------------------------
+Stock by ingredients:
+--------------------------------------------
+rice           :          2
+meat           :          4
+fish           :          1
+--------------------------------------------
+      -> trying to get 3 of rice
+      ->     2 of rice got from box2
+      ->     succesfully gathered 2 of rice missing:-1
+ StorageRoomException:Error: rice can not be gathered: needed:3, found:2

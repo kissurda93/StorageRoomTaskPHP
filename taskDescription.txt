@@ -1,0 +1,64 @@
+Example Task for developer applicant, junior/medior level
+--------------------------------------------------
+
+Use PHP (or optionally Typescript*), OOP.
+Do not include external source code, no database, or file i/o needed.
+
+
+Task short description:
+     We have a storage room, with multiple containers of different types:
+        refrigerator, box
+
+     We have food ingredients:
+        meat, salad, rice, flour, fish
+
+     Task is to store ingredients in the storage room / containers.
+
+
+Implement classes:
+	* class StorageRoom using StorageRoomInterface
+	* abstract class Container  using ContainerInterface
+	* classes Box, Refrigerator inherited from Container
+	* feel free to add classes if needed
+	Hint:	See Interfaces/ folder
+
+
+There are some rules, hints:
+	You can have multiple containers of the same type ( 2 refrigerator, 3 boxes)
+
+	Containers have limited space of storage:
+		refrigerator: 100 space-unit,
+		box: 40 space-unit
+
+	Different types of ingredients occupy different amount of space-units from containers:
+		meat:12 space-unit,
+		salad:30 space-unit,
+		rice:8 space-unit,
+		flour:15 space-unit,
+		fish:15 space-unit
+
+	We can store some ingredients:
+		fish, meat: only in fridge
+		salad: in fridge and/or box
+		rice, flour: only in boxes
+
+	In a box container, ingredients cannot be mixed
+
+	When adding ingredients to storage room:
+	 	Use containers in order (start using a new container only if no space in previous)
+	 	(maybe portion of ingredient must be split)
+
+	Nice-t-have-feature:
+		If an ingredient can be stored in a box and fridge, we should try to use a box if possible.
+
+
+Testing:
+	For testing run index.php.
+	You can modify index.php,Inventory.php, StorageRoomTest.php if needed,
+	but should work with the original ones.
+	For output example see: resultExample.txt
+
+
+*TypeScript:
+	In case using typesript recreate given classes in a similar structure if possible.
+
