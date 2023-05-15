@@ -20,37 +20,32 @@ class StorageRoom implements StorageRoomInterface
     echo "\t->trying to store $quantity $ingredientName\n";
 
     $ingredient = IngredientLibrary::getIngredient($ingredientName);
-    $spaceConsuming = $ingredient->getSpaceNeeded($quantity);
     
     foreach ($this->containers as $container) {
+      $spaceConsuming = $ingredient->getSpaceNeeded($quantity);
       $containerID = $container->getId();
       $freeSpace = $container->getFreeSpace();
-
-      if($freeSpace <= 0) {
-        continue;
-      }
-
+      
       if($freeSpace >= $spaceConsuming) {
-        $container->storedItems[$ingredientName] = $quantity;
+        $container->storedItems[$ingredientName] = isset($container->storedItems[$ingredientName]) 
+        ? $container->storedItems[$ingredientName] + $quantity
+        : $quantity;
+
         echo "\t->\t$quantity of $ingredientName added to $containerID\n";
         return;
       } 
-
+      
       if($freeSpace < $spaceConsuming) {
-        $rest = 0;
-        while ($freeSpace < $spaceConsuming) {
-          $rest++;
-          if(($quantity - $rest) <= 0) {
-            break;
-          }
-          $spaceConsuming = $ingredient->getSpaceNeeded($quantity - $rest);
-        }
+        $result = ($freeSpace / $ingredient->getSpaceUnit());
+        $storeableQuantity = floor($result);
 
-        if($freeSpace >= $spaceConsuming) {
-          $storeableQuantity = $quantity - $rest;
-          $container->storedItems[$ingredientName] += $storeableQuantity;
+        if($storeableQuantity >= 1) {
+          $container->storedItems[$ingredientName] = isset($container->storedItems[$ingredientName]) 
+          ? $container->storedItems[$ingredientName] + $storeableQuantity
+          : $storeableQuantity;
+          
           echo "\t->\t$storeableQuantity of $ingredientName added to $containerID\n";
-          $quantity = $rest;
+          $quantity = floor($quantity - $storeableQuantity);
           continue;
         } else {
           continue;
@@ -58,6 +53,7 @@ class StorageRoom implements StorageRoomInterface
       }
     }
 
+    var_dump($this->getContainers());
     throw new StorageRoomException("$ingredientName cannot store");
   }
 

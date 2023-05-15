@@ -31,17 +31,13 @@ class StorageRoomTest
             $inventory->listByContainers();
 
             $storageRoom->getIngredient('salad', 1);
-
             $storageRoom->getIngredient('meat', 8);
             $storageRoom->getIngredient('rice', 8);
 
             $inventory->listByContainers();
 			$inventory->listByIngredients();
 
-
-
             $storageRoom->getIngredient('rice', 3);
-            
 
         } catch (StorageRoomException $e) {
             echo "\n StorageRoomException:" . $e->getMessage();            

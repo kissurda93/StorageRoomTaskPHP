@@ -12,6 +12,11 @@ class Ingredient
 
   public function getSpaceNeeded(int $quantity): int
   {
-    return $this->spaceUnit * $quantity;
+    return ($this->spaceUnit * $quantity);
+  }
+
+  public function getSpaceUnit(): int
+  {
+    return $this->spaceUnit;
   }
 }

@@ -7,4 +7,3 @@ use Classes\StorageRoomTest;
 $application = new StorageRoomTest();
 
 $application->run();
-
