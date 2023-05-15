@@ -32,7 +32,7 @@ class Inventory
 		{
 			echo "\n" . str_pad($ingredientName, 15) . ": " . str_pad($quantity, 10, " ", STR_PAD_LEFT);
 		}
-		echo "\n--------------------------------------------";
+		echo "\n--------------------------------------------\n\n";
 	}
 
 	/**
@@ -63,7 +63,7 @@ class Inventory
 
 				echo "\n * " . str_pad($ingredientName, 10) . ":" . str_pad($quantity, 5, " ", STR_PAD_LEFT) . "  (space:{$spaceConsuming})";
 			}
-			echo "\n";
+			echo "\n\n";
 		}
 	}
 

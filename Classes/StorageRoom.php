@@ -22,9 +22,9 @@ class StorageRoom implements StorageRoomInterface
     $ingredient = IngredientLibrary::getIngredient($ingredientName);
     
     foreach ($this->containers as $container) {
-      $spaceConsuming = $ingredient->getSpaceNeeded($quantity);
       $containerID = $container->getId();
       $freeSpace = $container->getFreeSpace();
+      $spaceConsuming = $ingredient->getSpaceNeeded($quantity);
       
       if($freeSpace >= $spaceConsuming) {
         $container->storedItems[$ingredientName] = isset($container->storedItems[$ingredientName]) 
@@ -45,20 +45,51 @@ class StorageRoom implements StorageRoomInterface
           : $storeableQuantity;
           
           echo "\t->\t$storeableQuantity of $ingredientName added to $containerID\n";
-          $quantity = floor($quantity - $storeableQuantity);
-          continue;
-        } else {
-          continue;
+          $quantity -= $storeableQuantity;
         }
       }
     }
 
-    var_dump($this->getContainers());
     throw new StorageRoomException("$ingredientName cannot store");
   }
 
 	public function getIngredient(string $ingredientName, int $quantity)
   {
+    echo "\t->trying to get $quantity of $ingredientName\n";
+    $gatheredQuantity = 0;
+    $originalQuantity = $quantity;
+
+    foreach ($this->containers as $container) {
+      $containerID = $container->getId();
+
+      foreach ($container->storedItems as $ingredient => $quantityInContainer) {
+        if($ingredient == $ingredientName) {
+
+          if($quantityInContainer > $quantity) {
+            $container->storedItems[$ingredient] -= $quantity;
+            $gatheredQuantity += $quantity;
+            echo "\t->\t$quantity of $ingredientName got from $containerID\n";
+            break;
+          }
+
+          $gatheredQuantity += $quantityInContainer;
+          $quantity -= $quantityInContainer; 
+          unset($container->storedItems[$ingredient]);
+          echo "\t->\t$quantityInContainer of $ingredientName got from $containerID\n";
+        }
+      }
+
+      if($gatheredQuantity == $originalQuantity) {
+        break;
+      }
+    }
+
+    $missing = $originalQuantity - $gatheredQuantity;
+    echo "\t->\tsuccessfully gathered $gatheredQuantity of $ingredientName missing:$missing\n";
+
+    if($missing != 0) {
+      throw new StorageRoomException("Error: $ingredientName can not be gathered: needed:$originalQuantity, found:$gatheredQuantity");
+    }
 
   }
 
