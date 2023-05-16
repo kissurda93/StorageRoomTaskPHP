@@ -20,9 +20,15 @@ class StorageRoom implements StorageRoomInterface
     echo "\t->trying to store $quantity $ingredientName\n";
 
     $ingredient = IngredientLibrary::getIngredient($ingredientName);
+    $conatinerWatcher = new ContainerWatcher;
     
     foreach ($this->containers as $container) {
       $containerID = $container->getId();
+
+      if(!$conatinerWatcher->checkIngredient($ingredient, $containerID)) {
+        continue;
+      }
+
       $freeSpace = $container->getFreeSpace();
       $spaceConsuming = $ingredient->getSpaceNeeded($quantity);
       
@@ -50,7 +56,7 @@ class StorageRoom implements StorageRoomInterface
       }
     }
 
-    throw new StorageRoomException("$ingredientName cannot store");
+    throw new StorageRoomException("Error: $ingredientName cannot be stored");
   }
 
 	public function getIngredient(string $ingredientName, int $quantity)

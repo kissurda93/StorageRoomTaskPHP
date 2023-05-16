@@ -5,8 +5,9 @@ namespace Classes;
 class Ingredient
 {
   public function __construct(
-    private $name, 
-    private $spaceUnit
+    private string $name, 
+    private int $spaceUnit,
+    private array $usableContainers
   )
   {}
 
@@ -18,5 +19,10 @@ class Ingredient
   public function getSpaceUnit(): int
   {
     return $this->spaceUnit;
+  }
+
+  public function getUsableContainers(): array
+  {
+    return $this->usableContainers;
   }
 }
