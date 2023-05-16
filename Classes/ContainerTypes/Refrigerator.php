@@ -4,7 +4,7 @@ namespace Classes\ContainerTypes;
 
 class Refrigerator extends Container
 {
-  private static $count = 0;
+  private static int $count = 0;
 
   public function __construct()
   {

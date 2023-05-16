@@ -7,9 +7,9 @@ use Interfaces\ContainerInterface;
 
 abstract class Container implements ContainerInterface
 {
-  public $storedItems = [];
-  protected $storageSpace;
-  protected $id;
+  public array $storedItems = [];
+  protected int $storageSpace;
+  protected string $id;
 
   public function __construct()
   {

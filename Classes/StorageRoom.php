@@ -10,12 +10,12 @@ class StorageRoom implements StorageRoomInterface
 {
   private $containers = [];
 
-  public function addContainer(ContainerInterface $container)
+  public function addContainer(ContainerInterface $container): void
   {
     $this->containers[] = $container;
   }
 
-  public function storeIngredient(string $ingredientName, int $quantity)
+  public function storeIngredient(string $ingredientName, int $quantity): void
   {
     echo "\t->trying to store $quantity $ingredientName\n";
 
@@ -40,25 +40,23 @@ class StorageRoom implements StorageRoomInterface
         return;
       } 
       
-      if($freeSpace < $spaceConsuming) {
-        $result = ($freeSpace / $ingredient->getSpaceUnit());
-        $storeableQuantity = floor($result);
+      $result = ($freeSpace / $ingredient->getSpaceUnit());
+      $storeableQuantity = floor($result);
 
-        if($storeableQuantity >= 1) {
-          $container->storedItems[$ingredientName] = isset($container->storedItems[$ingredientName]) 
-          ? $container->storedItems[$ingredientName] + $storeableQuantity
-          : $storeableQuantity;
-          
-          echo "\t->\t$storeableQuantity of $ingredientName added to $containerID\n";
-          $quantity -= $storeableQuantity;
-        }
+      if($storeableQuantity >= 1) {
+        $container->storedItems[$ingredientName] = isset($container->storedItems[$ingredientName]) 
+        ? $container->storedItems[$ingredientName] + $storeableQuantity
+        : $storeableQuantity;
+        
+        echo "\t->\t$storeableQuantity of $ingredientName added to $containerID\n";
+        $quantity -= $storeableQuantity;
       }
     }
 
     throw new StorageRoomException("Error: $ingredientName cannot be stored");
   }
 
-	public function getIngredient(string $ingredientName, int $quantity)
+	public function getIngredient(string $ingredientName, int $quantity): void
   {
     echo "\t->trying to get $quantity of $ingredientName\n";
     $gatheredQuantity = 0;
@@ -82,10 +80,6 @@ class StorageRoom implements StorageRoomInterface
           unset($container->storedItems[$ingredient]);
           echo "\t->\t$quantityInContainer of $ingredientName got from $containerID\n";
         }
-      }
-
-      if($gatheredQuantity == $originalQuantity) {
-        break;
       }
     }
 
