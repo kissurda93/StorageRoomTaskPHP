@@ -20,12 +20,11 @@ class StorageRoom implements StorageRoomInterface
     echo "\t->trying to store $quantity $ingredientName\n";
 
     $ingredient = IngredientLibrary::getIngredient($ingredientName);
-    $conatinerWatcher = new ContainerWatcher;
     
     foreach ($this->containers as $container) {
       $containerID = $container->getId();
 
-      if(!$conatinerWatcher->checkIngredient($ingredient, $containerID)) {
+      if(!$ingredient->checkContainer($containerID)) {
         continue;
       }
 

@@ -21,8 +21,10 @@ class Ingredient
     return $this->spaceUnit;
   }
 
-  public function getUsableContainers(): array
+  public function checkContainer(string $containerID): bool
   {
-    return $this->usableContainers;
+    $containerType = preg_replace('/\d/u', '', $containerID);
+    
+    return in_array($containerType, $this->usableContainers) ? true : false;
   }
 }
