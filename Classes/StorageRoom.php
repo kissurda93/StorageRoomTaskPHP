@@ -72,7 +72,7 @@ class StorageRoom implements StorageRoomInterface
             $container->storedItems[$ingredient] -= $quantity;
             $gatheredQuantity += $quantity;
             echo "\t->\t$quantity of $ingredientName got from $containerID\n";
-            break;
+            break 2;
           }
 
           $gatheredQuantity += $quantityInContainer;
@@ -80,6 +80,10 @@ class StorageRoom implements StorageRoomInterface
           unset($container->storedItems[$ingredient]);
           echo "\t->\t$quantityInContainer of $ingredientName got from $containerID\n";
         }
+      }
+
+      if($gatheredQuantity == $originalQuantity) {
+        break;
       }
     }
 
