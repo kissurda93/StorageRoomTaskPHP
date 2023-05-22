@@ -2,12 +2,13 @@
 
 namespace Classes\ContainerTypes;
 
+use Classes\Ingredient;
 use Classes\IngredientLibrary;
 use Interfaces\ContainerInterface;
 
 abstract class Container implements ContainerInterface
 {
-  public array $storedItems = [];
+  protected array $storedItems = [];
   protected int $storageSpace;
   protected string $id;
 
@@ -49,5 +50,19 @@ abstract class Container implements ContainerInterface
       $usedSpace += $spaceConsuming;
     }
     return ($this->storageSpace - $usedSpace);
+  }
+
+  public function setIngredient(Ingredient $ingredient, int $quantity): void
+  {
+    $ingredientName = $ingredient->getName();
+
+    if($quantity === 0) {
+      unset($this->storedItems[$ingredientName]);
+      return;
+    }
+
+    $this->storedItems[$ingredientName] = isset($this->storedItems[$ingredientName]) 
+      ? $this->storedItems[$ingredientName] + $quantity
+      : $quantity;
   }
 }

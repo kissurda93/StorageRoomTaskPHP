@@ -30,10 +30,4 @@ class Ingredient
   {
     return ($this->spaceUnit * $quantity);
   }
-
-  public function checkContainer(string $containerID): bool
-  {
-    $containerType = preg_replace('/\d/u', '', $containerID);
-    return in_array($containerType, $this->usableContainers) ? true : false;
-  }
 }

@@ -38,15 +38,18 @@ class StorageRoom implements StorageRoomInterface
     echo "\t->trying to get $quantity of $ingredientName\n";
     $gatheredQuantity = 0;
     $originalQuantity = $quantity;
+    $ingredient = IngredientLibrary::getIngredient($ingredientName);
 
     foreach ($this->containers as $container) {
       $containerID = $container->getId();
+      $storedItems = $container->getStoredItems();
 
-      foreach ($container->storedItems as $ingredient => $quantityInContainer) {
-        if($ingredient == $ingredientName) {
+      foreach ($storedItems as $ingredientInContainer => $quantityInContainer) {
+        if($ingredientInContainer == $ingredientName) {
 
           if($quantityInContainer > $quantity) {
-            $container->storedItems[$ingredient] -= $quantity;
+            $newQuantity = $quantityInContainer - $quantity;
+            $container->setIngredient($ingredient, $newQuantity);
             $gatheredQuantity += $quantity;
             echo "\t->\t$quantity of $ingredientName got from $containerID\n";
             break 2;
@@ -54,7 +57,7 @@ class StorageRoom implements StorageRoomInterface
 
           $gatheredQuantity += $quantityInContainer;
           $quantity -= $quantityInContainer; 
-          unset($container->storedItems[$ingredient]);
+          $container->setIngredient($ingredient, 0);
           echo "\t->\t$quantityInContainer of $ingredientName got from $containerID\n";
         }
       }
@@ -83,19 +86,17 @@ class StorageRoom implements StorageRoomInterface
     foreach ($this->containers as $container) {
       $containerID = $container->getId();
       $containerType = preg_replace('/\d/u', '', $containerID);
-      $freeSpace = $container->getFreeSpace();
-      $ingredientName = $ingredient->getName();
-      $spaceConsuming = $ingredient->getSpaceNeeded($quantity);
 
       if($containerType != $usableContainer) {
         continue;
       }
+
+      $freeSpace = $container->getFreeSpace();
+      $ingredientName = $ingredient->getName();
+      $spaceConsuming = $ingredient->getSpaceNeeded($quantity);
       
       if($freeSpace >= $spaceConsuming) {
-        $container->storedItems[$ingredientName] = isset($container->storedItems[$ingredientName]) 
-        ? $container->storedItems[$ingredientName] + $quantity
-        : $quantity;
-
+        $container->setIngredient($ingredient, $quantity);
         echo "\t->\t$quantity of $ingredientName added to $containerID\n";
         return true;
       }
@@ -104,10 +105,7 @@ class StorageRoom implements StorageRoomInterface
       $storableQuantity = floor($result);
 
       if($storableQuantity >= 1) {
-        $container->storedItems[$ingredientName] = isset($container->storedItems[$ingredientName]) 
-        ? $container->storedItems[$ingredientName] + $storableQuantity
-        : $storableQuantity;
-        
+        $container->setIngredient($ingredient, $storableQuantity);
         echo "\t->\t$storableQuantity of $ingredientName added to $containerID\n";
         $quantity -= $storableQuantity;
       }
