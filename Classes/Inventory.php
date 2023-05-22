@@ -48,7 +48,7 @@ class Inventory
 
 		foreach ($containers as $container)
 		{
-			$storedItems  = $container->getstoredItems();
+			$storedItems  = $container->getStoredItems();
 			$storageLimit = $container->getStorageSpace();
 
 			$storageUsed = $container->getStorageUsed();
@@ -78,7 +78,7 @@ class Inventory
 
 		foreach ($containers as $container)
 		{
-			$storedItems = $container->getstoredItems();
+			$storedItems = $container->getStoredItems();
 
 			foreach ($storedItems as $ingredientName => $quantity)
 			{

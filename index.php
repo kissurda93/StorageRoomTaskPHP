@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-include "autoloader.php";
+include "autoLoader.php";
 
 use Classes\StorageRoomTest;
 
