@@ -7,7 +7,7 @@ class Ingredient
   public function __construct(
     private string $name, 
     private int $spaceUnit,
-    private array $usableContainers
+    private array $usableContainerTypes,
   )
   {}
 
@@ -21,9 +21,9 @@ class Ingredient
     return $this->name;
   }
 
-  public function getUsableContainers(): array
+  public function getUsableContainerTypes(): array
   {
-    return $this->usableContainers;
+    return $this->usableContainerTypes;
   }
 
   public function getSpaceNeeded(int $quantity): int

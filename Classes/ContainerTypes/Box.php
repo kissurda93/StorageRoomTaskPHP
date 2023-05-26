@@ -4,12 +4,10 @@ namespace Classes\ContainerTypes;
 
 class Box extends Container
 {
-  private static int $count = 0;
-
   public function __construct()
   {
-    $this->id = 'box' . ++self::$count;
     $this->storageSpace = 40;
+    $this->id = 'box' . ++parent::$counters['box'];
     parent::__construct();
   }
 }

@@ -19,16 +19,19 @@ class StorageRoom implements StorageRoomInterface
   {
     echo "\t->trying to store $quantity $ingredientName\n";
     $ingredient = IngredientLibrary::getIngredient($ingredientName);
-    $usableContainers = $ingredient->getUsableContainers();
+    $usableContainerTypes = $ingredient->getUsableContainerTypes();
 
-    foreach ($usableContainers as $usableContainer) {
-      $success = $this->storageInContainer($ingredient, $quantity, $usableContainer);
-      if($success) {
+    foreach ($usableContainerTypes as $usableContainerType) {
+      $storedQuantity = $this->checkUsableContainers($ingredient, $quantity, $usableContainerType);
+
+      if($storedQuantity == $quantity) {
         break;
       }
+
+      $quantity -= $storedQuantity;
     }
 
-    if(!$success) {
+    if($storedQuantity != $quantity) {
       throw new StorageRoomException("Error: $ingredientName cannot be stored\n");
     }
   }
@@ -41,29 +44,16 @@ class StorageRoom implements StorageRoomInterface
     $ingredient = IngredientLibrary::getIngredient($ingredientName);
 
     foreach ($this->containers as $container) {
-      $containerID = $container->getId();
       $storedItems = $container->getStoredItems();
+      
+      if(isset($storedItems[$ingredientName])) {
+        $returnedQuantity = $container->gatherIngredient($ingredient, $quantity);
+        $quantity -= $returnedQuantity;
+        $gatheredQuantity += $returnedQuantity;
 
-      foreach ($storedItems as $ingredientInContainer => $quantityInContainer) {
-        if($ingredientInContainer == $ingredientName) {
-
-          if($quantityInContainer > $quantity) {
-            $newQuantity = $quantityInContainer - $quantity;
-            $container->setIngredient($ingredient, $newQuantity);
-            $gatheredQuantity += $quantity;
-            echo "\t->\t$quantity of $ingredientName got from $containerID\n";
-            break 2;
-          }
-
-          $gatheredQuantity += $quantityInContainer;
-          $quantity -= $quantityInContainer; 
-          $container->setIngredient($ingredient, 0);
-          echo "\t->\t$quantityInContainer of $ingredientName got from $containerID\n";
+        if($gatheredQuantity == $originalQuantity) {
+          break;
         }
-      }
-
-      if($gatheredQuantity == $originalQuantity) {
-        break;
       }
     }
 
@@ -73,7 +63,6 @@ class StorageRoom implements StorageRoomInterface
     if($missing != 0) {
       throw new StorageRoomException("Error: $ingredientName can not be gathered: needed:$originalQuantity, found:$gatheredQuantity\n");
     }
-
   }
 
   public function getContainers(): array
@@ -81,35 +70,28 @@ class StorageRoom implements StorageRoomInterface
     return $this->containers;
   }
 
-  private function storageInContainer(Ingredient $ingredient, int $quantity, string $usableContainer): bool
+  private function checkUsableContainers(Ingredient $ingredient, int $quantity, string $usableContainerType): int
   {
+    $totalStoredQuantity = 0;
+    $originalQuantity = $quantity;
+
     foreach ($this->containers as $container) {
       $containerID = $container->getId();
       $containerType = preg_replace('/\d/u', '', $containerID);
 
-      if($containerType != $usableContainer) {
+      if($containerType != $usableContainerType) {
         continue;
       }
 
-      $freeSpace = $container->getFreeSpace();
-      $ingredientName = $ingredient->getName();
-      $spaceConsuming = $ingredient->getSpaceNeeded($quantity);
-      
-      if($freeSpace >= $spaceConsuming) {
-        $container->setIngredient($ingredient, $quantity);
-        echo "\t->\t$quantity of $ingredientName added to $containerID\n";
-        return true;
-      }
-      
-      $result = ($freeSpace / $ingredient->getSpaceUnit());
-      $storableQuantity = floor($result);
+      $storedQuantity = $container->storeIngredient($ingredient, $quantity);
+      $quantity -= $storedQuantity;
+      $totalStoredQuantity += $storedQuantity;
 
-      if($storableQuantity >= 1) {
-        $container->setIngredient($ingredient, $storableQuantity);
-        echo "\t->\t$storableQuantity of $ingredientName added to $containerID\n";
-        $quantity -= $storableQuantity;
+      if($totalStoredQuantity == $originalQuantity) {
+        return $totalStoredQuantity;
       }
     }
-    return false;
+
+    return $totalStoredQuantity;
   }
 }
