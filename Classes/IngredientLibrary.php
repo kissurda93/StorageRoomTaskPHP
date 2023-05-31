@@ -2,6 +2,8 @@
 
 namespace Classes;
 
+use Classes\Exceptions\IngredientLibraryException;
+
 class IngredientLibrary
 {
   private static $ingredients = [
@@ -12,12 +14,12 @@ class IngredientLibrary
 		'fish' => ['spaceUnit' => 15, 'usableContainerTypes' => ['fridge']],
   ];
 
-  public static function getIngredient(string $ingredientName): Object
+  public static function getIngredient(string $ingredientName): Ingredient
   {
-    foreach (self::$ingredients as $ingredient => $properties) {
-      if($ingredient === $ingredientName) {
-        return new Ingredient($ingredient, $properties['spaceUnit'], $properties['usableContainerTypes']);
-      }
+    if(isset(self::$ingredients[$ingredientName])) {
+      return new Ingredient($ingredientName, self::$ingredients[$ingredientName]['spaceUnit'], self::$ingredients[$ingredientName]['usableContainerTypes']);
+    } else {
+      throw new IngredientLibraryException('Ingredient not found!');
     }
   }
 }
